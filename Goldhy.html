@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Everything for Odhy ✨</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            background: #fff0f3;
+            font-family: 'Arial Rounded MT Bold', sans-serif;
+            overflow: hidden;
+            padding: 20px 0;
+        }
+        .sky-bg {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to bottom, #ffc2d1, #ffe5ec, #fff0f3);
+            z-index: -2;
+        }
+        #start-overlay {
+            position: fixed;
+            inset: 0;
+            background: #ffb3c1;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            cursor: pointer;
+        }
+        .lyric-card {
+            z-index: 10;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 15px 25px;
+            border-radius: 25px;
+            border: 4px solid #ff85a1;
+            width: 85%;
+            max-width: 500px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(251, 111, 146, 0.3);
+            display: none;
+        }
+        #text-display {
+            font-size: 1.4rem;
+            color: #ff4d6d;
+            font-weight: bold;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        #photo-area {
+            position: relative;
+            width: 100%;
+            height: 60vh;
+            display: none;
+            justify-content: center;
+            align-items: center;
+        }
+        .polaroid {
+            position: absolute;
+            width: 270px;
+            background: white;
+            padding: 12px 12px 60px 12px;
+            border-radius: 8px;
+            box-shadow: 0 20px 50px rgba(255, 133, 161, 0.4);
+            border: 2px solid #ffcad4;
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            opacity: 0;
+        }
+        .polaroid img { width: 100%; height: 270px; object-fit: cover; border-radius: 4px; }
+        .polaroid-caption {
+            position: absolute;
+            bottom: 15px; width: 100%; left: 0;
+            text-align: center; color: #ff85a1;
+            font-size: 1.1rem; font-weight: bold;
+        }
+        .cute-item {
+            position: absolute;
+            z-index: -1;
+            animation: floatAndRotate 10s infinite linear;
+        }
+        @keyframes floatAndRotate {
+            0% { transform: translateY(110vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.8; }
+            90% { opacity: 0.8; }
+            100% { transform: translateY(-15vh) rotate(360deg); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="start-overlay" onclick="startSurprise()">
+        <h1 style="font-size: 5rem;">🧸</h1>
+        <p style="font-weight: bold;">Klik Untuk Sayanggkuu💖</p>
+    </div>
+
+    <div class="sky-bg"></div>
+
+    <div class="lyric-card" id="lyric-ui">
+        <div id="text-display">...</div>
+    </div>
+
+    <div id="photo-area">
+        <div class="polaroid" id="photo-frame">
+            <img src="foto1.jpg" id="odhy-img">
+            <p class="polaroid-caption">Just For My Girl 💖</p>
+        </div>
+    </div>
+
+    <audio id="song" src="odhy.mpeg"></audio>
+
+    <script>
+        const fullLyrics = [
+            // INTRO & VERSE 1
+            { t: "Oh, oh-oh-oh", d: 2400 },
+            { t: "Oh-oh-oh-oh", d: 2400 },
+            { t: "Oh-oh-oh", d: 2400 },
+            { t: "Oh-oh-oh", d: 2800 },
+            { t: "✨ Instrumental ✨", d: 4500 },
+            { t: "Oh, her eyes, her eyes", d: 3800 },
+            { t: "Make the stars look like they're not shinin'", d: 3600 },
+            { t: "Her hair, her hair", d: 2000 }, // FAST SYNC
+            { t: "Falls perfectly without her tryin'", d: 4200 },
+            { t: "She's so beautiful", d: 3500 },
+            { t: "And I tell her everyday", d: 3800 },
+            { t: "Yeah, I know, I know", d: 2400 }, // FAST SYNC
+            { t: "When I compliment her, she won't believe me", d: 3400 },
+            { t: "And it's so, it's so", d: 2400 },
+            { t: "Sad to think that she don't see what I see", d: 3400 },
+            { t: "But every time she asks me, Do I look okay?", d: 4000 },
+            { t: "I say...", d: 1800 },
+
+            // CHORUS 1
+            { t: "When I see your face", d: 4200 },
+            { t: "There's not a thing that I would change", d: 4000 },
+            { t: "'Cause you're amazing", d: 3800 },
+            { t: "Just the way you are", d: 4500 },
+            { t: "And when you smile", d: 4200 },
+            { t: "The whole world stops and stares for a while", d: 4000 },
+            { t: "'Cause girl, you're amazing", d: 3800 },
+            { t: "Just the way you are", d: 5000 },
+
+            // VERSE 2
+            { t: "Her lips, her lips", d: 2200 },
+            { t: "I could kiss them all day if she'd let me", d: 4000 },
+            { t: "Her laugh, her laugh", d: 2200 },
+            { t: "She hates but I think it's so sexy", d: 4000 },
+            { t: "She's so beautiful", d: 3500 },
+            { t: "And I tell her everyday", d: 3800 },
+            { t: "Oh, you know, you know, you know", d: 3000 },
+            { t: "I'd never ask you to change", d: 3400 },
+            { t: "If perfect's what you're searchin' for", d: 3200 },
+            { t: "Then just stay the same", d: 3400 },
+            { t: "So don't even bother askin' if you look okay", d: 4200 },
+            { t: "You know I'll say...", d: 1800 },
+
+            // CHORUS 2 & OUTRO
+            { t: "When I see your face", d: 4200 },
+            { t: "There's not a thing that I would change", d: 4000 },
+            { t: "'Cause you're amazing", d: 3800 },
+            { t: "Just the way you are", d: 4500 },
+            { t: "And when you smile", d: 4200 },
+            { t: "The whole world stops and stares for a while", d: 4000 },
+            { t: "'Cause girl, you're amazing", d: 3800 },
+            { t: "Just the way you are", d: 4500 },
+            { t: "The way you are", d: 3000 },
+            { t: "Girl, you're amazing", d: 3500 },
+            { t: "Just the way you are", d: 5000 },
+            { t: "✨ I Love You, Sayanggg ✨", d: 10000 }
+        ];
+
+        const photos = ["my girl.jpg", "cewek cantik.jpg", "goldhy.jpg", "my bini.jpg", "my fineshyt.jpg", "my mbg.jpg"];
+        let lIdx = 0;
+        let pIdx = 0;
+
+        function startSurprise() {
+            document.getElementById('start-overlay').style.display = 'none';
+            document.getElementById('lyric-ui').style.display = 'block';
+            document.getElementById('photo-area').style.display = 'flex';
+            document.getElementById('song').play();
+            
+            setInterval(createDoll, 700);
+            runFlow();
+        }
+
+        function createDoll() {
+            const icons = ['🧸', '🐰', '🎀', '🌸', '✨', '🍭', '💖', '🌈'];
+            const item = document.createElement('div');
+            item.className = 'cute-item';
+            item.innerText = icons[Math.floor(Math.random() * icons.length)];
+            item.style.left = Math.random() * 95 + 'vw';
+            item.style.fontSize = (Math.random() * 1.5 + 1) + 'rem';
+            document.body.appendChild(item);
+            setTimeout(() => item.remove(), 10000);
+        }
+
+        function runFlow() {
+            if (lIdx >= fullLyrics.length) return;
+
+            const frame = document.getElementById('photo-frame');
+            const img = document.getElementById('odhy-img');
+            const text = document.getElementById('text-display');
+            const current = fullLyrics[lIdx];
+
+            text.style.opacity = 0;
+            setTimeout(() => {
+                text.innerText = current.t;
+                text.style.opacity = 1;
+            }, 50);
+
+            frame.style.opacity = 0;
+            setTimeout(() => {
+                img.src = photos[pIdx];
+                pIdx = (pIdx + 1) % photos.length;
+
+                const limitX = window.innerWidth - 300;
+                const x = (Math.random() * limitX) - (limitX / 2);
+                const rot = (Math.random() * 10) - 5;
+
+                frame.style.transform = `translate(${x}px, 0px) rotate(${rot}deg) scale(1.02)`;
+                frame.style.opacity = 1;
+            }, 200);
+
+            lIdx++;
+            setTimeout(runFlow, current.d); 
+        }
+    </script>
+</body>
+</html>
